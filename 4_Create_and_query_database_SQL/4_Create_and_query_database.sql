@@ -167,3 +167,31 @@ VALUES
 (10007, '2023-12-01', 8, 700000, 1006),
 (10008, '2023-12-01', 9, 800000, 1007),
 (10009, '2023-12-01', 10, 900000, 1008);
+
+--//////////////////////////////////////////////////////////////////////////////////////////////////////////////////--
+
+
+-- a. Wyświetl tylko id pracownika oraz jego nazwisko. 
+SELECT id_pracownika, nazwisko FROM ksiegowosc.pracownicy;	
+
+-- b. Wyświetl id pracowników, których płaca jest większa niż 1000. 
+SELECT ksiegowosc.pracownicy.id_pracownika
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+WHERE ksiegowosc.pensja.kwota > 1000;
+
+-- c. Wyświetl id pracowników nieposiadających premii, których płaca jest większa niż 2000.
+SELECT ksiegowosc.pracownicy.id_pracownika
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
+WHERE ksiegowosc.pensja.kwota > 2000 AND ksiegowosc.premie.id_premii IS NULL;
+
+-- d. Wyświetl pracowników, których pierwsza litera imienia zaczyna się na literę ‘J’
+SELECT ksiegowosc.pracownicy.id_pracownika,
+	   ksiegowosc.pracownicy.imie,
+	   ksiegowosc.pracownicy.nazwisko
+FROM ksiegowosc.pracownicy
+WHERE ksiegowosc.pracownicy.imie LIKE 'J%';
