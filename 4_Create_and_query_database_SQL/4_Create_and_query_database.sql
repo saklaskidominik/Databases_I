@@ -195,3 +195,20 @@ SELECT ksiegowosc.pracownicy.id_pracownika,
 	   ksiegowosc.pracownicy.nazwisko
 FROM ksiegowosc.pracownicy
 WHERE ksiegowosc.pracownicy.imie LIKE 'J%';
+
+-- e. Wyświetl pracowników, których nazwisko zawiera literę ‘n’ oraz imię kończy się na literę ‘a’.
+SELECT ksiegowosc.pracownicy.id_pracownika,
+	   ksiegowosc.pracownicy.imie,
+	   ksiegowosc.pracownicy.nazwisko
+FROM ksiegowosc.pracownicy
+WHERE ksiegowosc.pracownicy.imie LIKE '%a' AND ksiegowosc.pracownicy.nazwisko LIKE '%n%';
+
+-- f. Wyświetl imię i nazwisko pracowników oraz liczbę ich nadgodzin, przyjmując,standardowy czas pracy to 160 h miesięcznie. 
+SELECT
+    ksiegowosc.pracownicy.imie,
+    ksiegowosc.pracownicy.nazwisko,
+    GREATEST(SUM(ksiegowosc.godziny.liczba_godzin) - 160, 0) AS nadgodziny
+FROM ksiegowosc.pracownicy
+LEFT JOIN ksiegowosc.godziny ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.godziny.id_pracownika
+GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko;
+	
