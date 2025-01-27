@@ -211,4 +211,25 @@ SELECT
 FROM ksiegowosc.pracownicy
 LEFT JOIN ksiegowosc.godziny ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.godziny.id_pracownika
 GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko;
-	
+
+-- g. Wyświetl imię i nazwisko pracowników, których pensja zawiera się w przedziale 1500 – 3000 PLN. 
+SELECT
+    ksiegowosc.pracownicy.imie,
+    ksiegowosc.pracownicy.nazwisko
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+WHERE ksiegowosc.pensja.kwota >= 1500 AND ksiegowosc.pensja.kwota <= 3000;
+--lub -- WHERE ksiegowosc.pensja.kwota BETWEEN 1500 AND 3000;
+
+--h. Wyświetl imię i nazwisko pracowników, którzy pracowali w nadgodzinach i nie otrzymali premii.	
+SELECT
+    ksiegowosc.pracownicy.imie,
+    ksiegowosc.pracownicy.nazwisko
+FROM ksiegowosc.pracownicy
+JOIN ksiegowosc.godziny ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.godziny.id_pracownika
+LEFT JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.godziny.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+WHERE ksiegowosc.wynagrodzenie.id_premii IS NULL
+GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko
+HAVING
+    COALESCE(SUM(ksiegowosc.godziny.liczba_godzin), 0) > 160;
