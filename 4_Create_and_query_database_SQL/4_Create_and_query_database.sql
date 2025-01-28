@@ -233,3 +233,29 @@ WHERE ksiegowosc.wynagrodzenie.id_premii IS NULL
 GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko
 HAVING
     COALESCE(SUM(ksiegowosc.godziny.liczba_godzin), 0) > 160;
+
+
+-- i. Uszereguj pracowników według pensji. 
+SELECT
+    ksiegowosc.pracownicy.imie,
+    ksiegowosc.pracownicy.nazwisko,
+    ksiegowosc.pensja.kwota
+FROM ksiegowosc.pracownicy
+LEFT JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+ORDER BY ksiegowosc.pensja.kwota DESC;
+	
+	
+-- j. Uszereguj pracowników według (SUMY) pensji i premii malejąco.
+SELECT
+    ksiegowosc.pracownicy.imie,
+    ksiegowosc.pracownicy.nazwisko,
+    SUM(ksiegowosc.pensja.kwota) + COALESCE(SUM(ksiegowosc.premie.kwota), 0) AS suma_pensji_i_premii
+FROM ksiegowosc.pracownicy
+LEFT JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
+LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
+GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko
+ORDER BY
+    COALESCE(SUM(ksiegowosc.pensja.kwota), 0) + COALESCE(SUM(ksiegowosc.premie.kwota), 0) DESC;
+	
