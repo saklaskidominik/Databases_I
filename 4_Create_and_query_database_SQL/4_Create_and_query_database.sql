@@ -258,4 +258,18 @@ LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.p
 GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko
 ORDER BY
     COALESCE(SUM(ksiegowosc.pensja.kwota), 0) + COALESCE(SUM(ksiegowosc.premie.kwota), 0) DESC;
+
 	
+-- k. Zlicz i pogrupuj pracowników według pola ‘stanowisko’.
+SELECT ksiegowosc.pensja.stanowisko, COUNT(*)
+FROM ksiegowosc.pensja
+GROUP BY ksiegowosc.pensja.stanowisko;
+
+
+-- l. Policz średnią, minimalną i maksymalną płacę dla stanowiska ‘kierownik’ (jeżeli takiego nie masz, to przyjmij dowolne inne).
+SELECT
+    AVG(ksiegowosc.pensja.kwota) AS srednia_placa_Kierownik,
+    MIN(ksiegowosc.pensja.kwota) AS minimalna_placa_Kierownik,
+    MAX(ksiegowosc.pensja.kwota) AS maksymalna_placa_Kierownik
+FROM ksiegowosc.pensja
+WHERE ksiegowosc.pensja.stanowisko = 'Kierownik';
