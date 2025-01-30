@@ -174,12 +174,14 @@ VALUES
 -- a. Wyświetl tylko id pracownika oraz jego nazwisko. 
 SELECT id_pracownika, nazwisko FROM ksiegowosc.pracownicy;	
 
+
 -- b. Wyświetl id pracowników, których płaca jest większa niż 1000. 
 SELECT ksiegowosc.pracownicy.id_pracownika
 FROM ksiegowosc.pracownicy
 JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.wynagrodzenie.id_pracownika
 JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
 WHERE ksiegowosc.pensja.kwota > 1000;
+
 
 -- c. Wyświetl id pracowników nieposiadających premii, których płaca jest większa niż 2000.
 SELECT ksiegowosc.pracownicy.id_pracownika
@@ -189,6 +191,7 @@ JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja
 LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
 WHERE ksiegowosc.pensja.kwota > 2000 AND ksiegowosc.premie.id_premii IS NULL;
 
+
 -- d. Wyświetl pracowników, których pierwsza litera imienia zaczyna się na literę ‘J’
 SELECT ksiegowosc.pracownicy.id_pracownika,
 	   ksiegowosc.pracownicy.imie,
@@ -196,12 +199,14 @@ SELECT ksiegowosc.pracownicy.id_pracownika,
 FROM ksiegowosc.pracownicy
 WHERE ksiegowosc.pracownicy.imie LIKE 'J%';
 
+
 -- e. Wyświetl pracowników, których nazwisko zawiera literę ‘n’ oraz imię kończy się na literę ‘a’.
 SELECT ksiegowosc.pracownicy.id_pracownika,
 	   ksiegowosc.pracownicy.imie,
 	   ksiegowosc.pracownicy.nazwisko
 FROM ksiegowosc.pracownicy
 WHERE ksiegowosc.pracownicy.imie LIKE '%a' AND ksiegowosc.pracownicy.nazwisko LIKE '%n%';
+
 
 -- f. Wyświetl imię i nazwisko pracowników oraz liczbę ich nadgodzin, przyjmując,standardowy czas pracy to 160 h miesięcznie. 
 SELECT
@@ -212,6 +217,7 @@ FROM ksiegowosc.pracownicy
 LEFT JOIN ksiegowosc.godziny ON ksiegowosc.pracownicy.id_pracownika = ksiegowosc.godziny.id_pracownika
 GROUP BY ksiegowosc.pracownicy.id_pracownika, ksiegowosc.pracownicy.imie, ksiegowosc.pracownicy.nazwisko;
 
+
 -- g. Wyświetl imię i nazwisko pracowników, których pensja zawiera się w przedziale 1500 – 3000 PLN. 
 SELECT
     ksiegowosc.pracownicy.imie,
@@ -221,6 +227,7 @@ JOIN ksiegowosc.wynagrodzenie ON ksiegowosc.pracownicy.id_pracownika = ksiegowos
 JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
 WHERE ksiegowosc.pensja.kwota >= 1500 AND ksiegowosc.pensja.kwota <= 3000;
 --lub -- WHERE ksiegowosc.pensja.kwota BETWEEN 1500 AND 3000;
+
 
 --h. Wyświetl imię i nazwisko pracowników, którzy pracowali w nadgodzinach i nie otrzymali premii.	
 SELECT
@@ -273,3 +280,21 @@ SELECT
     MAX(ksiegowosc.pensja.kwota) AS maksymalna_placa_Kierownik
 FROM ksiegowosc.pensja
 WHERE ksiegowosc.pensja.stanowisko = 'Kierownik';
+
+
+-- m. Policz sumę wszystkich wynagrodzeń.
+SELECT
+    SUM(ksiegowosc.pensja.kwota) + COALESCE(SUM(ksiegowosc.premie.kwota), 0) AS suma_wynagrodzen
+FROM ksiegowosc.wynagrodzenie
+LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii;
+
+
+-- n. Policz sumę wynagrodzeń w ramach danego stanowiska.
+SELECT
+    ksiegowosc.pensja.stanowisko,
+    SUM(pensja.kwota) + COALESCE(SUM(premie.kwota), 0) AS suma_wynagrodzen
+FROM ksiegowosc.wynagrodzenie
+LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
+GROUP BY ksiegowosc.pensja.stanowisko;
