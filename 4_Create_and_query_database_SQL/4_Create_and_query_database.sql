@@ -298,3 +298,13 @@ FROM ksiegowosc.wynagrodzenie
 LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
 LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
 GROUP BY ksiegowosc.pensja.stanowisko;
+
+
+-- o. Wyznacz liczbę premii przyznanych dla pracowników danego stanowiska.
+SELECT
+    ksiegowosc.pensja.stanowisko,
+    COUNT(ksiegowosc.premie.id_premii) AS liczba_premii
+FROM ksiegowosc.wynagrodzenie
+LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
+LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
+GROUP BY ksiegowosc.pensja.stanowisko;
