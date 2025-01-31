@@ -308,3 +308,14 @@ FROM ksiegowosc.wynagrodzenie
 LEFT JOIN ksiegowosc.pensja ON ksiegowosc.wynagrodzenie.id_pensji = ksiegowosc.pensja.id_pensji
 LEFT JOIN ksiegowosc.premie ON ksiegowosc.wynagrodzenie.id_premii = ksiegowosc.premie.id_premii
 GROUP BY ksiegowosc.pensja.stanowisko;
+
+-- p. Usuń wszystkich pracowników mających pensję mniejszą niż 1200 zł.
+DELETE FROM ksiegowosc.wynagrodzenie
+WHERE id_pensji IN 
+	(SELECT id_pensji
+    FROM ksiegowosc.pensja
+    WHERE kwota < 1200);
+	
+-- dodatkowe: do sprawdzenia wykonania pkt. p.
+SELECT ksiegowosc.wynagrodzenie.id_pracownika
+FROM ksiegowosc.wynagrodzenie;
